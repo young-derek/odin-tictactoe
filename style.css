@@ -13,8 +13,10 @@
 #game-board {
     border: 1px solid black;
     margin: auto;
-    width: max(300px, 30vw);
-    height: max(300px, 30vw);
+    min-width: 200px;
+    min-height: 200px;
+    width: 60vmin;
+    height: 60vmin;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
@@ -22,4 +24,11 @@
 
 #game-board div {
     border: 1px solid black;
+}
+
+.game-tile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: max(3.5rem, 8vh);
 }
