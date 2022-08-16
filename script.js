@@ -1,8 +1,8 @@
+// Game board module
 const gameBoard = (() => {
     const gameBoardArray = Array.apply(null, Array(9));
     const gameTiles = document.querySelectorAll('.game-tile');
 
-    // Add event listener to game tiles
     gameTiles.forEach(tile => {
         tile.addEventListener('click', () => {
             gameController.handleClick(tile);
@@ -19,8 +19,8 @@ const gameBoard = (() => {
 
 })();
 
-
-const newPlayer = (playerNumber, gamePiece, playerName = "Anonymous") => {
+// New player factory function
+const newPlayer = (playerNumber, gamePiece, playerName) => {
     const _gamePiece = gamePiece;
     const _playerName = playerName;
 
@@ -35,15 +35,28 @@ const newPlayer = (playerNumber, gamePiece, playerName = "Anonymous") => {
     };
 }
 
-const playerOne = newPlayer(1, "X", "Shrek");
-const playerTwo = newPlayer(2, "O", "Donkey");
+const playerOne = newPlayer(1, "X", "Player One");
+const playerTwo = newPlayer(2, "O", "Player Two");
 
-// Function to make the game functional
+// Game functionality module
 const gameController = (() => {
 
+    let playerOneWins = 0;
+    let playerTwoWins = 0;
     let currentPlayer = playerOne;
     let winner;
     let gameOver = false;
+    const displayActivePlayer = document.getElementById('active-player');
+    const displayWinner = document.getElementById('winner');
+    const displayPlayerOneWins = document.getElementById('player-one-wins');
+    const displayPlayerTwoWins = document.getElementById('player-two-wins');
+    const resetButton = document.getElementById('btn-reset')
+
+    updateDisplayStatus();
+
+    resetButton.addEventListener('click', () => {
+        Reset();
+    })
 
     function handleClick(tile) {
         if (!gameOver) {
@@ -54,6 +67,7 @@ const gameController = (() => {
                 gameBoard.renderContents();
                 winner = getWinner();
                 changePlayerTurn();
+                updateDisplayStatus();
 
             }
         }
@@ -92,19 +106,41 @@ const gameController = (() => {
                 gameOver = true;
                 return playerTwo;
             }
+            else if (!gameBoard.gameBoardArray.includes(undefined)) {
+                gameOver = true;
+                return "Draw";
+            }
+        }
+    }
+
+    function updateDisplayStatus() {
+        if (gameOver) {
+            if (winner === playerOne) {
+                displayWinner.textContent = "Player One wins!";
+                playerOneWins++;
+            }
+            else if (winner === playerTwo) {
+                displayWinner.textContent = "Player Two Wins!";
+                playerTwoWins++;
+            }
+            else if (winner === "Draw") {
+                displayWinner.textContent = "Draw!";
+            }
         }
 
-        // display winner
-        // 
-
+        displayActivePlayer.textContent = `Current Player: ${currentPlayer.playerNumber}`;
+        displayPlayerOneWins.textContent = `Player One wins: ${playerOneWins}`;
+        displayPlayerTwoWins.textContent = `Player Two wins: ${playerTwoWins}`;
 
     }
 
     function Reset() {
-        gameBoard.gameBoardArray.fill(undefined, 0, 8);
+        gameBoard.gameBoardArray.fill(undefined, 0, 9);
         gameBoard.renderContents();
         winner = null;
         gameOver = false;
+        currentPlayer = playerOne;
+        displayWinner.textContent = "";
     }
 
     return { handleClick };
